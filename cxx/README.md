@@ -1,4 +1,4 @@
-## C/C++ programs for fun
+## C/C++ codes
 ### Sudoku Solver
 A simple program for solving sudoku problem
 ```bash
