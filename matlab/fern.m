@@ -1,4 +1,4 @@
-% This script is modified official fern implement by Matlab
+% This script is modified version based on official fern implement by Matlab
 % It not display figure with window but save it to a picture file
 
 function [] = fern(step, outfile)
