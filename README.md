@@ -1,2 +1,4 @@
 ## Introduction
-This repo contain several funny codes.
+### Coding when boring.
+![](images/coding.gif)
+
