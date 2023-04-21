@@ -1,2 +1,2 @@
 ## Introduction
-This repo contain several funny jupyter notebooks.
+This repo contain several funny codes.
