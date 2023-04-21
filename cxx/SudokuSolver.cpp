@@ -1,33 +1,39 @@
 #include <iostream>
 #include <vector>
-#include<algorithm>
+#include <algorithm>
+#include <ctime>
 using namespace std;
 
 class Solution{
 public:
-	int getPossible(vector<vector<char> >& board, int i, int j){
-		int a=511;
-		int pos;
-		for(int k=0;k<9;k++){
-			if(k!=j&&board[i][k]!='.'){
-				pos = board[i][k]-'1';
-				pos = 1<<pos;
-				a &= (511-pos);
+	int getPossible(vector<vector<char> >& board, int row, int col){
+		// 511 = 0b111111111 means 1~9
+		int possibleNums=511;
+		int impossibleNum;
+		for(int i=0;i<9;i++){
+			// remove impossible nums by check numbers in same row
+			if(i!=col&&board[row][i]!='.'){
+				impossibleNum = board[row][i]-'1';
+				impossibleNum = 1<<impossibleNum;
+				possibleNums &= (511-impossibleNum);
 			}
-			if(k!=i&&board[k][j]!='.'){
-				pos = board[k][j]-'1';
-				pos = 1<<pos;
-				a &= (511-pos);
+			// remove impossible nums by check numbers in same column
+			if(i!=row&&board[i][col]!='.'){
+				impossibleNum = board[i][col]-'1';
+				impossibleNum = 1<<impossibleNum;
+				possibleNums &= (511-impossibleNum);
 			}
-			if(k/3!=i%3&&k%3!=j%3&&board[i/3*3+k/3][j/3*3+k%3]!='.'){
-				pos = board[i/3*3+k/3][j/3*3+k%3]-'1';
-				pos = 1<<pos;
-				a &= (511-pos);
+			// remove impossible nums by check numbers in same 3*3 grid
+			if(i/3!=row%3&&i%3!=col%3&&board[row/3*3+i/3][col/3*3+i%3]!='.'){
+				impossibleNum = board[row/3*3+i/3][col/3*3+i%3]-'1';
+				impossibleNum = 1<<impossibleNum;
+				possibleNums &= (511-impossibleNum);
 			}
 		}
-		return a;
+		return possibleNums;
 	}
 
+	// extract possible numbers to vector
 	vector<int> getPossibleNums(int possible){
 		vector<int> res;
 		int i=1;
@@ -41,50 +47,57 @@ public:
 		return res;
 	}
 
-	bool dfs(vector<vector<char> >& board, int pos, int blank){
+	bool dfs(vector<vector<char> >& board, int position, int blank){
 		int possible;
 		int check;
-		int i=pos/9;
-		int j=pos%9;
+		int row=position/9;
+		int col=position%9;
 		vector<int> possibleNums;
 
-		if(board[i][j] == '.'){
-			possible = getPossible(board, i, j);
+		// if current position is empty, select one possible number, and dfs
+		if(board[row][col] == '.'){
+			possible = getPossible(board, row, col);
 			if(possible==0){
 				return false;
 			}else{
 				possibleNums = getPossibleNums(possible);
-				for(int k=0; k<possibleNums.size();k++){
-					board[i][j] = possibleNums[k]+'0';
+				// use random shuffle, this program can also used for generating sudoku game.
+				random_shuffle(possibleNums.begin(), possibleNums.end());
+				for(int i=0; i<possibleNums.size();i++){
+					board[row][col] = possibleNums[i]+'0';
 					blank--;
+					// only when no blank left, the problem is solved
 					if(blank==0){
 						return true;
 					}
-					if(dfs(board, pos+1, blank)){
+					if(dfs(board, position+1, blank)){
 						return true;
 					};
-					board[i][j] = '.';
+					board[row][col] = '.';
 					blank++;
 				}
 			}
-		}else{
-			if(dfs(board, pos+1, blank)){
+		}
+		// else move to next position, and dfs
+		else{
+			if(dfs(board, position+1, blank)){
 				return true;
 			};
 		}
 		return false;
 	}
 
-	void solveSudoku(vector<vector<char> >& board){
+	// count blank, then start dfs from 1st position
+	bool solveSudoku(vector<vector<char> >& board){
 		int blank=0;
-		for(int i=0;i<9;i++){
-			for(int j=0;j<9;j++){
-				if(board[i][j]=='.'){
+		for(int row=0;row<9;row++){
+			for(int col=0;col<9;col++){
+				if(board[row][col]=='.'){
 					blank++;
 				}
 			}
 		}
-		dfs(board, 0, blank);
+		return dfs(board, 0, blank);
 	}
 };
 
@@ -109,12 +122,22 @@ public:
 		this->board = board;
 	}
 	void PrintBoard(){
-		for(vector<vector<char> >::iterator iteri=this->board.begin(); iteri!=this->board.end();iteri++){
-			for(vector<char>::iterator iterj=iteri->begin();iterj!=iteri->end();iterj++){
-				cout<<*iterj<<' ';
+		for(int i=0; i<board.size(); i++){
+			if(i%3==0){
+				cout<<"++===+===+===++===+===+===++===+===+===++\n";
+			}else{
+				cout<<"++---+---+---++---+---+---++---+---+---++\n";
 			}
-			cout<<endl;
+			for(int j=0; j<board[i].size(); j++){
+				if(j%3==0){
+					cout<<"|| "<<board[i][j]<<" ";
+				}else{
+					cout<<"| "<<board[i][j]<<" ";
+				}
+			}
+			cout<<"||\n";
 		}
+		cout<<"++===+===+===++===+===+===++===+===+===++\n";
 	}
 };
 
@@ -123,6 +146,7 @@ int main(){
 	vector< vector<char> > board;
 	vector<char> tmp;
 
+	srand((unsigned int)time(0));
 	cout<<"Input numbers in sudoku game, input \".\" for missing, seperate with space\n";
 	while(n>0){
 		char i;
@@ -137,11 +161,16 @@ int main(){
 	}
 	
 	Board newboard(board);
-	cout<<"=====Before=====\n";
+	cout<<"Origin:\n";
 	newboard.PrintBoard();
 	Solution s;
-	cout<<"=====After=====\n";
-	s.solveSudoku(newboard.board);
-	newboard.PrintBoard();
+	
+	if(s.solveSudoku(newboard.board)){
+		cout<<"\nSolved:\n";
+		newboard.PrintBoard();
+	}
+	else{
+		cout<<"\nNo Answer\n";
+	}
 	return 0;
 }
