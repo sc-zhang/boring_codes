@@ -19,3 +19,10 @@ g++ -O3 -o GaussianElimination GaussianElimination.cpp
 # 3 2 1 1 7
 # 4 3 2 1 10 
 ```
+
+### Sequence Alignment
+A simple implement of Needleman-Wunsch and Smith-Waterman algorithm
+```bash
+g++ -O3 -o global_align global_align.cpp
+g++ -O3 -o local_align local_align.cpp
+```
