@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import random
-import sys
+import argparse
+import time
 
 
 def calc_diff(mat, x, y):
@@ -25,7 +26,7 @@ def calc_diff(mat, x, y):
         return diff_cnt*1.0/total_cnt
 
 
-def unsat_stat(mat, per_sim):
+def unsat_stat(mat, satisf):
     total_cnt = 0
     unsat_cnt = 0
     for x in range(0, area_edge):
@@ -33,40 +34,32 @@ def unsat_stat(mat, per_sim):
             if mat[x][y] != 0:
                 total_cnt += 1
                 diff = calc_diff(mat, x, y)
-                if diff > per_sim:
+                if diff > satisf:
                     unsat_cnt += 1
     return unsat_cnt, total_cnt
 
 
-def ABM(mat, blank_list, area_edge, per_sim, iter_cnt):
+def ABM(mat, blank_list, area_edge, satisf, iter_cnt):
     if iter_cnt > iter_max:
         return -1
     
     for x in range(0, area_edge):
         for y in range(0, area_edge):
             diff = calc_diff(mat, x, y)
-            if (not mat[x][y] is np.nan) and diff > per_sim:
+            if (not mat[x][y] is np.nan) and diff > satisf:
                 cur_type = mat[x][y]
                 cur_pos = x*area_edge+y
-                if len(blank_list) == 0:
-                    nx = random.randint(0, area_edge-1)
-                    ny = random.randint(0, area_edge-1)
-                    while nx==x and ny==y:
-                        nx = random.randint(0, area_edge-1)
-                        ny = random.randint(0, area_edge-1)
-                    tmp = mat[x][y]
-                    mat[x][y] = mat[nx][ny]
-                    mat[nx][ny] = tmp
-                else:
-                    idx = random.randint(0, len(blank_list)-1)
-                    new_pos = blank_list[idx]
-                    nx = int(new_pos/area_edge)
-                    ny = new_pos%area_edge
-                    mat[nx][ny] = cur_type
-                    mat[x][y] = np.nan
-                    del blank_list[idx]
-                    blank_list.append(cur_pos)
-    unsat = unsat_stat(mat, per_sim)
+                # move to blank site
+                idx = random.randint(0, len(blank_list)-1)
+                new_pos = blank_list[idx]
+                nx = int(new_pos/area_edge)
+                ny = new_pos%area_edge
+                mat[nx][ny] = cur_type
+                mat[x][y] = np.nan
+                del blank_list[idx]
+                blank_list.append(cur_pos)
+    
+    unsat = unsat_stat(mat, satisf)
     if unsat[0] == 0:
         return 1
     else:
@@ -99,26 +92,26 @@ def init_area(area_edge, ele_type, dens):
     return mat, blank_list
 
 
-def visualization(mat, blank_list, area_edge, per_sim, iter_max):
+def visualization(mat, blank_list, area_edge, satisf, iter_max):
     plt.figure(figsize=(area_edge, area_edge))
     ax = plt.gca()
     plt.ion()
     iter_cnt = 0
     ax.imshow(mat, cmap="rainbow")
+    time.sleep(1)
     plt.title("Origin")
-    plt.savefig("origin.pdf", bbox_inches='tight')
-    print("Origin area saved")
-    res = ABM(mat, blank_list, area_edge, per_sim, iter_cnt)
-    
-    while res!=-1 and res!=1:
-        if iter_cnt%1==0:
+
+    res = ABM(mat, blank_list, area_edge, satisf, iter_cnt)
+
+    while iter_cnt < iter_max and res!=-1 and res!=1:
+        if iter_cnt%area_edge==0:
             plt.cla()
             ax.imshow(mat, cmap="rainbow")
             plt.title("Iter: %d, Unsat: %.2f%%"%(iter_cnt+1, res*100))
-            plt.pause(0.1)
+            plt.pause(1)
         print("Iter: %d, Unsat: %.2f%%"%(iter_cnt, res*100))
         iter_cnt += 1
-        res = ABM(mat, blank_list, area_edge, per_sim, iter_cnt)
+        res = ABM(mat, blank_list, area_edge, satisf, iter_cnt)
 
     plt.cla()
     ax.imshow(mat, cmap="rainbow")
@@ -126,26 +119,45 @@ def visualization(mat, blank_list, area_edge, per_sim, iter_max):
         plt.title("Iter: %d, Unsat: 0.00%%"%iter_cnt)
     else:
         plt.title("Iter: %d, Unsat: NaN"%iter_cnt)
-    plt.savefig("final.pdf", bbox_inches='tight')
     plt.ioff()
     plt.show()
 
 
-if __name__ == "__main__":
-    if len(sys.argv) < 6:
-        print("Usage: python %s <permit_sim> <density> <element_type_count> <area_edge_length> <iteration_max_count>"%sys.argv[0])
-        sys.exit(-1)
-    per_sim = float(sys.argv[1])
-    dens = float(sys.argv[2])
-    ele_type = int(sys.argv[3])
-    area_edge = int(sys.argv[4])
-    iter_max = int(sys.argv[5])
+def get_opts():
+    group = argparse.ArgumentParser()
+    group.add_argument('-s', '--satisfaction', help='ratio of satifaction, should >0 and <1, default=0.3', type=float, default=0.3)
+    group.add_argument('-d', '--density', help='density of element, should >0 and <1, default=0.5', type=float, default=0.5)
+    group.add_argument('-e', '--element', help='types of elements, default=3', type=int, default=3)
+    group.add_argument('-a', '--area', help='area**2=area size, default=10', type=int, default=10)
+    group.add_argument('-i', '--iteration', help='iteration cycles, default=1e6', type=float, default=1e6)
+    return group.parse_args()
 
+
+if __name__ == "__main__":
+    opts = get_opts()
+    satisf = opts.satisfaction
+    dens = opts.density
+    ele_type = opts.element
+    area_edge = opts.area
+    iter_max = opts.iteration
+    if satisf <= 0 or satisf >= 1:
+        print("Invalid satisfaction value, aborting")
+        exit(-1)
+    if dens <= 0 or dens >= 1:
+        print("Invalid density value, aborting")
+        exit(-1)
+    if ele_type < 0:
+        print("Invalid element value, aborting")
+    if area_edge < 0:
+        print("Invalid area value, aborting")
+    if iter_max < 0:
+        print("Invalid iteration value, aborting")
+    
     print("Init area")
     mat, blank_list = init_area(area_edge, ele_type, dens)
     
     print("Starting iteration")
-    visualization(mat, blank_list, area_edge, per_sim, iter_max)
+    visualization(mat, blank_list, area_edge, satisf, iter_max)
     
     print("Finished")
- 
+    
