@@ -26,3 +26,9 @@ A simple implement of Needleman-Wunsch and Smith-Waterman algorithm
 g++ -O3 -o global_align global_align.cpp
 g++ -O3 -o local_align local_align.cpp
 ```
+
+### DFS Maze Generator
+A simple maze generator based on dfs
+```bash
+g++ -O3 -o dfs_maze dfs_maze.cpp --std=c++11
+```
