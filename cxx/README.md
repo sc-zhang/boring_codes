@@ -27,8 +27,10 @@ g++ -O3 -o global_align global_align.cpp
 g++ -O3 -o local_align local_align.cpp
 ```
 
-### DFS Maze Generator
+### Maze
+- DFS Maze Generator
 A simple maze generator based on dfs
 ```bash
-g++ -O3 -o dfs_maze dfs_maze.cpp --std=c++11
+cd maze
+g++ -O3 -o dfs_maze_gen dfs_maze_gen.cpp --std=c++11
 ```

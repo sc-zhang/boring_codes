@@ -10,9 +10,9 @@ void disp_maze(std::vector<std::vector<int> > maze){
     for(int i=0; i<maze.size(); i++){
         for(int j=0; j<maze[i].size(); j++){
             if(maze[i][j]==WALL){
-                std::cout<<"OO";
+                std::cout<<"1";
             }else{
-                std::cout<<"  ";
+                std::cout<<"0";
             }
         }
         std::cout<<"\n";
