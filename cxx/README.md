@@ -20,6 +20,15 @@ g++ -O3 -o GaussianElimination GaussianElimination.cpp
 # 4 3 2 1 10 
 ```
 
+### Heapsort
+A simple implement of heapsort
+```bash
+g++ -O3 -o heapsort heapsort.cpp
+# input
+# a number n
+# n numbers for sorting
+```
+
 ### Sequence Alignment
 A simple implement of Needleman-Wunsch and Smith-Waterman algorithm
 ```bash
