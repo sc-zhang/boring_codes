@@ -20,9 +20,11 @@ g++ -O3 -o GaussianElimination GaussianElimination.cpp
 # 4 3 2 1 10 
 ```
 
-### Heapsort
+### Sort
+- Heapsort
 A simple implement of heapsort
 ```bash
+cd sort
 g++ -O3 -o heapsort heapsort.cpp
 # input
 # a number n
