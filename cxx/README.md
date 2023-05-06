@@ -45,3 +45,10 @@ A simple maze generator based on dfs
 cd maze
 g++ -O3 -o dfs_maze_gen dfs_maze_gen.cpp --std=c++11
 ```
+
+### Tower of Hanoi
+Tower of Hanoi Sovler
+```bash
+g++ -O3 -o hanoi hanoi.cpp
+```
+
