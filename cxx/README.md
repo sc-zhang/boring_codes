@@ -52,9 +52,9 @@ Tower of Hanoi Sovler
 g++ -O3 -o hanoi hanoi.cpp
 ```
 
-### Guess Number
+### A/B Guess Number
 A/B Number Guess Game
 Guess a non-repeat 4-digit number, number with correct number and position will mark as A, number with correct number but wrong position as B.
 ```bash
-g++ -O3 -o GuessNumber GuessNumber.cpp
+g++ -O3 -o ABGuessNumber ABGuessNumber.cpp
 ```
