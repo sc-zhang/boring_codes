@@ -21,20 +21,18 @@ int main()
     ans_set.insert(ans[i]);
   }
   int cur_round = 1;
-  std::vector<char> input;
   std::unordered_set<char> input_set;
   int tmp;
   int corr_cnt, semi_corr_cnt;
   while(cur_round<=N){
     std::cout<<"["<<cur_round<<"/"<<N<<"]Input a non-repeat four-digit number: ";
-    input = {'0', '0', '0', '0'};
-    std::cin>>tmp;
+    std::string input;
+    std::cin>>input;
     int cur = DIGIT_CNT-1;
     input_set.clear();
-    while(tmp){
-      input[cur] = tmp%10+'0';
-      tmp /= 10;
-      --cur;
+    if(input.size()!=DIGIT_CNT){
+      std::cout<<"Invalid Number Found, Retry\n";
+      continue;
     }
     for(int i=0; i<input.size(); ++i){
       input_set.insert(input[i]);
@@ -62,6 +60,7 @@ int main()
     }
     ++cur_round;
   }
+  std::cout<<"You Lose!, Ans:";
   for(int i=0; i<DIGIT_CNT; ++i){
     std::cout<<ans[i];
   }

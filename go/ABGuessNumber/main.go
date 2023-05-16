@@ -64,5 +64,5 @@ func main(){
     }
     curr_cnt++
   }
-  fmt.Println("You lose!")
+  fmt.Printf("You lose! Ans: %d%d%d%d\n", arr[0], arr[1], arr[2], arr[3])
 }
