@@ -7,3 +7,9 @@ cd hanoi
 cargo build --release
 ```
 
+### Guess Number
+Guess number <= 1000 in 10 times
+```bash
+cd guess_number
+cargo build --release
+```
