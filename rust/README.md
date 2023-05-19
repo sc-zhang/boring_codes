@@ -13,3 +13,10 @@ Guess number <= 1000 in 10 times
 cd guess_number
 cargo build --release
 ```
+
+### A/B Guess Number
+A/B Guess Number Game
+```bash
+cd ab_guess_number
+cargo build --release
+```
