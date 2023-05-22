@@ -1,4 +1,6 @@
-﻿class Hanoi
+﻿using System;
+
+class Hanoi
 {
     static void Main(string[] args){
         Console.WriteLine(args.Length);
