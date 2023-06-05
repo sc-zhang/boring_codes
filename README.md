@@ -9,4 +9,4 @@
 - Go
 - Rust
 - Matlab
-- Python
+- Python/Jupyter-notebook
