@@ -17,27 +17,27 @@ function saa_tsp(city_count)
     d = d+d';
 
     tic
-    T0 = 1000;
-    T = T0;
-    Tfinal = 0.0001;
-    iter = 500;
-    alpha = 0.95;
+    T0 = 1000; % the origin temperature
+    T = T0; % temperature of each iteration
+    Tfinal = 0.0001; % final temperature
+    test_count = 500; % for each iteration, test 500 times
+    alpha = 0.95; % coefficient of temperatue drop
 
     path0 = randperm(n);
     result0 = calculate_tsp_d(path0,d);
 
     min_result = result0;
-    round_count = 0;
+    iter_count = 0;
     while T > Tfinal
         T = T*alpha;
-        round_count = round_count + 1;
+        iter_count = iter_count + 1;
     end
     T = T0;
-    RESULT = zeros(round_count, 1);
-    round_count = 1;
+    RESULT = zeros(iter_count, 1);
+    iter_count = 1;
     while T > Tfinal
         % for each temperature test iter times
-        for i = 1 : iter
+        for i = 1 : test_count
             path1 = gen_new_path(path0);
             result1 = calculate_tsp_d(path1,d);
             if result1 < result0    
@@ -55,8 +55,8 @@ function saa_tsp(city_count)
                 best_path = path0;
             end
         end
-        RESULT(round_count) = min_result;
-        round_count = round_count + 1;
+        RESULT(iter_count) = min_result;
+        iter_count = iter_count + 1;
         T = alpha*T;
     end
 
@@ -83,7 +83,7 @@ function saa_tsp(city_count)
     end
 
     figure
-    plot(1:round_count-1,RESULT,'b-');
+    plot(1:iter_count-1,RESULT,'b-');
     xlabel('Iter count');
     ylabel('Minium distance');
 end
