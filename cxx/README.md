@@ -35,6 +35,7 @@ g++ -O3 -o heapsort heapsort.cpp
 ### Sequence Alignment
 A simple implement of Needleman-Wunsch and Smith-Waterman algorithm
 ```bash
+cd alignment
 g++ -O3 -o global_align global_align.cpp
 g++ -O3 -o local_align local_align.cpp
 # input two sequences
